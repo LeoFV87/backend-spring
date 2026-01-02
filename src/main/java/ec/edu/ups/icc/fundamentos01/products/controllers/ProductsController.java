@@ -22,13 +22,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 
 @RestController
-@RequestMapping("/products")
+@RequestMapping("/api/products")
 public class ProductsController {
 
     private List<Products> products = new ArrayList<>();
     private int currentId = 1;
 
-        @GetMapping
+    @GetMapping
     public List<ProductsResponseDto> findAll() {
 
         List<ProductsResponseDto> dtos = new ArrayList<>();

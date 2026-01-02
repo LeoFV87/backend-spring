@@ -19,7 +19,7 @@ import ec.edu.ups.icc.fundamentos01.users.dtos.UserResponseDto;
 import ec.edu.ups.icc.fundamentos01.users.services.UserService;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 public class UsersController {
 
    private final UserService service;
