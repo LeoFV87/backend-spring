@@ -1,72 +1,85 @@
 package ec.edu.ups.icc.fundamentos01.users.services;
 
-import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
 
-import ec.edu.ups.icc.fundamentos01.users.dtos.CreateUserDto;
-import ec.edu.ups.icc.fundamentos01.users.dtos.PartialUpdateUserDto;
-import ec.edu.ups.icc.fundamentos01.users.dtos.UpdateUserDto;
-import ec.edu.ups.icc.fundamentos01.users.dtos.UserResponseDto;
-import ec.edu.ups.icc.fundamentos01.users.entities.User;
+import ec.edu.ups.icc.fundamentos01.users.dtos.*;
+import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
 import ec.edu.ups.icc.fundamentos01.users.mappers.UserMapper;
+import ec.edu.ups.icc.fundamentos01.users.models.User;
+import ec.edu.ups.icc.fundamentos01.users.repositories.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
-    private List<User> users = new ArrayList<>();
-    private int currentId = 1;
+    private final UserRepository userRepo; 
 
-    @Override
-    public List<UserResponseDto> findAll() {
-        return users.stream().map(UserMapper::toResponse).toList();
+    public UserServiceImpl(UserRepository userRepo) {
+        this.userRepo = userRepo;
     }
 
     @Override
-    public Object findOne(int id) {
-        return users.stream()
-                .filter(u -> u.getId() == id)
-                .findFirst()
+    public List<UserResponseDto> findAll() {
+        // Obtenemos de la BD y mapeamos a DTO
+        return userRepo.findAll().stream()
                 .map(UserMapper::toResponse)
-                .orElseGet(() -> new UserResponseDto() { public String error = "User not found"; });
+                .toList();
+    }
+
+    @Override
+    public UserResponseDto findOne(int id) {
+        return userRepo.findById((long) id)
+                .map(UserMapper::toResponse)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
     }
 
     @Override
     public UserResponseDto create(CreateUserDto dto) {
-        User user = UserMapper.toEntity(currentId++, dto.name, dto.email);
-        users.add(user);
-        return UserMapper.toResponse(user);
+        // Usamos el modelo de dominio para la lógica y convertimos a Entidad
+        User user = User.fromDto(dto);
+        UserEntity entity = user.toEntity();
+
+        UserEntity saved = userRepo.save(entity); // Guardado real en Postgres
+        return UserMapper.toResponse(saved);
     }
 
     @Override
-    public Object update(int id, UpdateUserDto dto) {
-        User user = users.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
-        if (user == null) return new Object() { public String error = "User not found"; };
+    public UserResponseDto update(int id, UpdateUserDto dto) {
+        UserEntity entity = userRepo.findById((long) id)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-        user.setName(dto.name);
-        user.setEmail(dto.email);
+        // Actualizamos los campos usando los nuevos Getters del DTO
+        entity.setName(dto.getName());
+        entity.setEmail(dto.getEmail());
+        if (dto.getPassword() != null) {
+            entity.setPassword(dto.getPassword());
+        }
 
-        return UserMapper.toResponse(user);
+        UserEntity updated = userRepo.save(entity);
+        return UserMapper.toResponse(updated);
     }
 
     @Override
-    public Object partialUpdate(int id, PartialUpdateUserDto dto) {
-        User user = users.stream().filter(u -> u.getId() == id).findFirst().orElse(null);
-        if (user == null) return new Object() { public String error = "User not found"; };
+    public UserResponseDto partialUpdate(int id, PartialUpdateUserDto dto) {
+        UserEntity entity = userRepo.findById((long) id)
+                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
 
-        if (dto.name != null) user.setName(dto.name);
-        if (dto.email != null) user.setEmail(dto.email);
+        if (dto.getName() != null)
+            entity.setName(dto.getName());
+        if (dto.getEmail() != null)
+            entity.setEmail(dto.getEmail());
 
-        return UserMapper.toResponse(user);
+        UserEntity updated = userRepo.save(entity);
+        return UserMapper.toResponse(updated);
     }
 
     @Override
-    public Object delete(int id) {
-        boolean removed = users.removeIf(u -> u.getId() == id);
-        if (!removed) return new Object() { public String error = "User not found"; };
-
-        return new Object() { public String message = "Deleted successfully"; };
+    public void delete(int id) {
+        userRepo.findById((long) id)
+                .ifPresentOrElse(
+                        userRepo::delete, 
+                        () -> {
+                            throw new IllegalStateException("Usuario no encontrado"); // Error si no existe
+                        });
     }
-
 }

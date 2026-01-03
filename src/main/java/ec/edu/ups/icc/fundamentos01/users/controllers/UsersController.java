@@ -55,7 +55,11 @@ public class UsersController {
 
     @DeleteMapping("/{id}")
     public Object delete(@PathVariable int id) {
-        return service.delete(id);
-    }
+    service.delete(id); 
+    return java.util.Map.of(
+        "message", "Deleted successfully",
+        "id", id
+    );
+   }
 
 }

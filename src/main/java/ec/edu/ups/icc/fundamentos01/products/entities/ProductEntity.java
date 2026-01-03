@@ -1,9 +1,21 @@
-package ec.edu.ups.icc.fundamentos01.products.dtos;
+package ec.edu.ups.icc.fundamentos01.products.entities;
 
-public class CreateProductsDto {
+import ec.edu.ups.icc.core.entities.BaseModel;
+import jakarta.persistence.*;
+
+@Entity
+@Table(name = "products") 
+public class ProductEntity extends BaseModel {
+
+    @Column(nullable = false, length = 150)
     private String name;
-    private String description; 
-    private Double price;
+
+    private String description;
+
+    @Column(nullable = false)
+    private Double price; 
+
+    @Column(nullable = false)
     private Integer stock;
 
     // Getters y Setters
@@ -16,5 +28,3 @@ public class CreateProductsDto {
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
 }
-
-

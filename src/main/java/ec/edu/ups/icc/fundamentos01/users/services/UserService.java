@@ -20,7 +20,7 @@ public interface UserService {
 
     Object update(int id, UpdateUserDto dto);
 
-    Object delete(int id);
+    void delete(int id);
 
     Object partialUpdate(int id, PartialUpdateUserDto dto);
 }
