@@ -3,6 +3,8 @@ package ec.edu.ups.icc.fundamentos01.users.services;
 import java.util.List;
 import org.springframework.stereotype.Service;
 
+import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
+import ec.edu.ups.icc.fundamentos01.exception.domain.NotFoundException;
 import ec.edu.ups.icc.fundamentos01.users.dtos.*;
 import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
 import ec.edu.ups.icc.fundamentos01.users.mappers.UserMapper;
@@ -20,7 +22,6 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserResponseDto> findAll() {
-        // Obtenemos de la BD y mapeamos a DTO
         return userRepo.findAll().stream()
                 .map(UserMapper::toResponse)
                 .toList();
@@ -28,15 +29,17 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto findOne(int id) {
+        // Lanzamos NotFoundException para generar un error 404 limpio
         return userRepo.findById((long) id)
                 .map(UserMapper::toResponse)
-                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("Usuario con ID " + id + " no encontrado"));
     }
 
     @Override
     public UserResponseDto create(CreateUserDto dto) {
+        // Usamos ConflictException para errores de duplicidad (Email)
         if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-            throw new IllegalStateException("El email ya está registrado");
+            throw new ConflictException("El email '" + dto.getEmail() + "' ya está registrado");
         }
 
         User user = User.fromDto(dto);
@@ -47,9 +50,8 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto update(int id, UpdateUserDto dto) {
         UserEntity entity = userRepo.findById((long) id)
-                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("No se puede actualizar: Usuario no encontrado"));
 
-        // Actualizamos los campos usando los nuevos Getters del DTO
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
         if (dto.getPassword() != null) {
@@ -63,7 +65,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserResponseDto partialUpdate(int id, PartialUpdateUserDto dto) {
         UserEntity entity = userRepo.findById((long) id)
-                .orElseThrow(() -> new IllegalStateException("Usuario no encontrado"));
+                .orElseThrow(() -> new NotFoundException("No se puede actualizar: Usuario no encontrado"));
 
         if (dto.getName() != null)
             entity.setName(dto.getName());
@@ -80,7 +82,8 @@ public class UserServiceImpl implements UserService {
                 .ifPresentOrElse(
                         userRepo::delete,
                         () -> {
-                            throw new IllegalStateException("Usuario no encontrado"); // Error si no existe
+                            // Error semántico 404 en lugar de error interno
+                            throw new NotFoundException("No se puede eliminar: Usuario no encontrado");
                         });
     }
 }

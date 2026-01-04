@@ -8,6 +8,6 @@ import java.util.Optional;
 
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
-    // Método personalizado automático por convención
+
     Optional<UserEntity> findByEmail(String email);
 }

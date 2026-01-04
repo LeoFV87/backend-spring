@@ -5,6 +5,8 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
+import ec.edu.ups.icc.fundamentos01.exception.domain.NotFoundException;
 import ec.edu.ups.icc.fundamentos01.products.dtos.CreateProductsDto;
 import ec.edu.ups.icc.fundamentos01.products.dtos.PartialUpdateProductsDto;
 import ec.edu.ups.icc.fundamentos01.products.dtos.ProductsResponseDto;
@@ -30,23 +32,24 @@ public class ProductServiceImpl implements ProductsService {
                 .toList();
     }
 
-   @Override
+    @Override
     public Object findOne(int id) {
-        // Busca por ID en PostgreSQL (cast a Long para BaseModel)
+        // Reemplazamos el .orElse(Map) por .orElseThrow para usar el manejador global
         return productRepo.findById((long) id)
                 .map(Products::fromEntity)
                 .map(Products::toResponseDto)
-                .map(dto -> (Object) dto) // Casteo para que coincida con el retorno Object
-                .orElse(Map.of("error", "Product not found"));
+                .orElseThrow(() -> new NotFoundException("Producto no encontrado con ID: " + id));
     }
 
-   @Override
+    @Override
     public ProductsResponseDto create(CreateProductsDto dto) {
-        // DTO -> Modelo de Dominio
+        
+        if (productRepo.findByName(dto.getName()).isPresent()) {
+            throw new ConflictException("El nombre del producto '" + dto.getName() + "' ya existe");
+        }
+
         Products product = Products.fromDto(dto);
-        // Modelo -> Entidad -> Guardar en Postgres
         ProductEntity saved = productRepo.save(product.toEntity());
-        // Entidad -> Modelo -> DTO de respuesta
         return Products.fromEntity(saved).toResponseDto();
     }
 
@@ -59,8 +62,7 @@ public class ProductServiceImpl implements ProductsService {
                 .map(productRepo::save)            
                 .map(Products::fromEntity)
                 .map(Products::toResponseDto)
-                .map(dtoResponse -> (Object) dtoResponse)
-                .orElse(Map.of("error", "Product not found"));
+                .orElseThrow(() -> new NotFoundException("No se puede actualizar: Producto no encontrado")); //
     }
 
     @Override
@@ -72,21 +74,16 @@ public class ProductServiceImpl implements ProductsService {
                 .map(productRepo::save)
                 .map(Products::fromEntity)
                 .map(Products::toResponseDto)
-                .map(dtoResponse -> (Object) dtoResponse)
-                .orElse(Map.of("error", "Product not found"));
+                .orElseThrow(() -> new NotFoundException("No se puede actualizar: Producto no encontrado")); //
     }
 
     @Override
     public Object delete(int id) {
-        return productRepo.findById((long) id)
-                .map(entity -> {
-                    productRepo.delete(entity); 
-                    return (Object) Map.of("message", "Deleted successfully");
-                })
-                .orElse(Map.of("error", "Product not found"));
+        // Buscamos la entidad; si no existe, lanzamos 404
+        ProductEntity entity = productRepo.findById((long) id)
+                .orElseThrow(() -> new NotFoundException("No se puede eliminar: Producto no encontrado"));
+
+        productRepo.delete(entity); 
+        return Map.of("message", "Deleted successfully");
     }
-
-
-
-   
 }
