@@ -1,10 +1,12 @@
 package ec.edu.ups.icc.fundamentos01.products.models;
 
+import ec.edu.ups.icc.fundamentos01.categories.entity.CategoryEntity;
 import ec.edu.ups.icc.fundamentos01.products.dtos.CreateProductsDto;
 import ec.edu.ups.icc.fundamentos01.products.dtos.PartialUpdateProductsDto;
 import ec.edu.ups.icc.fundamentos01.products.dtos.ProductsResponseDto;
 import ec.edu.ups.icc.fundamentos01.products.dtos.UpdateProductsDto;
 import ec.edu.ups.icc.fundamentos01.products.entities.ProductEntity;
+import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
 
 public class Products {
     private int id;
@@ -49,6 +51,26 @@ public class Products {
         entity.setStock(this.stock);
         return entity;
     }
+
+ public ProductEntity toEntity(UserEntity owner, CategoryEntity category) {
+        ProductEntity entity = new ProductEntity();
+        if (this.id > 0) {
+         entity.setId((long) this.id);
+
+        }
+        entity.setName(this.name);
+        entity.setDescription(this.description);
+        entity.setPrice(this.price);
+        entity.setStock(this.stock);
+
+        entity.setOwner(owner);
+        entity.setCategory(category);
+
+        return entity;
+    }
+
+
+
 
     public ProductsResponseDto toResponseDto() {
         ProductsResponseDto dto = new ProductsResponseDto();
