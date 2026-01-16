@@ -20,12 +20,11 @@ import jakarta.validation.Valid;
 
 import org.springframework.web.bind.annotation.RequestMapping;
 
-
 @RestController
 @RequestMapping("/api/products")
 public class ProductsController {
 
-   private final ProductsService productsService;
+    private final ProductsService productsService;
 
     public ProductsController(ProductsService productsService) {
         this.productsService = productsService;
@@ -60,5 +59,15 @@ public class ProductsController {
     public Object delete(@PathVariable("id") int id) {
         return productsService.delete(id);
     }
-    
+
+    @GetMapping("/user/{userId}")
+    public List<ProductsResponseDto> findByUserId(@PathVariable("userId") Long userId) {
+        return productsService.findByUserId(userId);
+    }
+
+    @GetMapping("/category/{categoryId}")
+    public List<ProductsResponseDto> findByCategoryId(@PathVariable("categoryId") Long categoryId) {
+        return productsService.findByCategoryId(categoryId);
+    }
+
 }

@@ -16,5 +16,8 @@ public interface ProductsService {
     Object partialUpdate(int id, PartialUpdateProductsDto dto);
     Object delete(int id);
 
+    List<ProductsResponseDto> findByUserId(Long userId);
+    List<ProductsResponseDto> findByCategoryId(Long categoryId);
+
 
 }

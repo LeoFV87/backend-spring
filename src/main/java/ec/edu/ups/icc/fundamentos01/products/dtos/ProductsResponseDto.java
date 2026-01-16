@@ -2,11 +2,26 @@ package ec.edu.ups.icc.fundamentos01.products.dtos;
 
 public class ProductsResponseDto {
     
-  private int id;
+    public int id;
     private String name;
     private Double price;
     private Integer stock;
     private String createdAt; 
+
+    public UserSummaryDto user;
+    public CategoryResponseDto category;
+
+    public static class UserSummaryDto {
+        public Long id;
+        public String name;
+        public String email;
+    }
+
+    public static class CategoryResponseDto {
+        public Long id;
+        public String name;
+        public String description;
+    }
 
  
     public ProductsResponseDto() {}

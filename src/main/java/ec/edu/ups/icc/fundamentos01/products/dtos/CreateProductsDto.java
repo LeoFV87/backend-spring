@@ -8,8 +8,11 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class CreateProductsDto {
-    @NotNull(message = "El ownerId es obligatorio")
-    private Long ownerId;
+    @NotNull(message = "El userId es obligatorio")
+    private Long userId; // Cambiado de ownerId a userId
+
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    private Integer stock; // Quité el @NotNull porque el script no lo envía
 
     @NotNull(message = "El categoryId es obligatorio")
     private Long categoryId;
@@ -24,21 +27,17 @@ public class CreateProductsDto {
     @Min(value = 0, message = "El precio no puede ser negativo") //
     private Double price;
 
-    @NotNull(message = "El stock es obligatorio")
-    @Min(value = 0, message = "El stock no puede ser negativo") //
-    private Integer stock;
 
-      
     public UserSummaryDto user;
     public CategoryResponseDto category;
 
     // ============== AUDITORÍA ==============
-    
+
     public LocalDateTime createdAt;
     public LocalDateTime updatedAt;
 
     // ============== DTOs INTERNOS ==============
-    
+
     public static class UserSummaryDto {
         public Long id;
         public String name;
@@ -52,22 +51,46 @@ public class CreateProductsDto {
     }
 
     // Getters y Setters
-    public String getName() { return name; }
-    public void setName(String name) { this.name = name; }
-    public String getDescription() { return description; }
-    public void setDescription(String description) { this.description = description; }
-    public Double getPrice() { return price; }
-    public void setPrice(Double price) { this.price = price; }
-    public Integer getStock() { return stock; }
-    public void setStock(Integer stock) { this.stock = stock; }
-
-    public Long getOwnerId() {
-        return ownerId;
+    public String getName() {
+        return name;
     }
 
-    public void setOwnerId(Long ownerId) {
-        this.ownerId = ownerId;
+    public void setName(String name) {
+        this.name = name;
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Double getPrice() {
+        return price;
+    }
+
+    public void setPrice(Double price) {
+        this.price = price;
+    }
+
+    public Integer getStock() {
+        return stock;
+    }
+
+    public void setStock(Integer stock) {
+        this.stock = stock;
+    }
+
+    public Long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Long userId) {
+        this.userId = userId;
+    }
+
     public Long getCategoryId() {
         return categoryId;
     }
@@ -76,7 +99,4 @@ public class CreateProductsDto {
         this.categoryId = categoryId;
     }
 
-
 }
-
-
