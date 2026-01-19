@@ -29,5 +29,7 @@ public abstract class BaseModel {
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public LocalDateTime getCreatedAt() { return createdAt; }
-    public boolean isDeleted() { return deleted; }
+    public boolean isDeleted() { return deleted; } 
+    public LocalDateTime getUpdatedAt() {return updatedAt;}
+    public void setUpdatedAt(LocalDateTime updatedAt) {this.updatedAt = updatedAt;}
 }

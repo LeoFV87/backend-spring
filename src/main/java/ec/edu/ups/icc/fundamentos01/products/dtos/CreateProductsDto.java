@@ -1,22 +1,11 @@
 package ec.edu.ups.icc.fundamentos01.products.dtos;
 
-import java.time.LocalDateTime;
-
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 
 public class CreateProductsDto {
-    @NotNull(message = "El userId es obligatorio")
-    private Long userId; // Cambiado de ownerId a userId
-
-    @Min(value = 0, message = "El stock no puede ser negativo")
-    private Integer stock; // Quité el @NotNull porque el script no lo envía
-
-    @NotNull(message = "El categoryId es obligatorio")
-    private Long categoryId;
-
     @NotBlank(message = "El nombre del producto es obligatorio")
     @Size(min = 3, message = "El nombre debe tener al menos 3 caracteres")
     private String name;
@@ -24,79 +13,31 @@ public class CreateProductsDto {
     private String description;
 
     @NotNull(message = "El precio es obligatorio")
-    @Min(value = 0, message = "El precio no puede ser negativo") //
+    @Min(value = 0, message = "El precio no puede ser negativo")
     private Double price;
 
 
-    public UserSummaryDto user;
-    public CategoryResponseDto category;
+    @Min(value = 0, message = "El stock no puede ser negativo")
+    private Integer stock;
 
-    // ============== AUDITORÍA ==============
+    // === CAMPOS OBLIGATORIOS PARA EL SCRIPT ===
+    @NotNull(message = "El userId es obligatorio")
+    private Long userId;
 
-    public LocalDateTime createdAt;
-    public LocalDateTime updatedAt;
+    @NotNull(message = "El categoryId es obligatorio")
+    private Long categoryId;
 
-    // ============== DTOs INTERNOS ==============
-
-    public static class UserSummaryDto {
-        public Long id;
-        public String name;
-        public String email;
-    }
-
-    public static class CategoryResponseDto {
-        public Long id;
-        public String name;
-        public String description;
-    }
-
-    // Getters y Setters
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public void setDescription(String description) {
-        this.description = description;
-    }
-
-    public Double getPrice() {
-        return price;
-    }
-
-    public void setPrice(Double price) {
-        this.price = price;
-    }
-
-    public Integer getStock() {
-        return stock;
-    }
-
-    public void setStock(Integer stock) {
-        this.stock = stock;
-    }
-
-    public Long getUserId() {
-        return userId;
-    }
-
-    public void setUserId(Long userId) {
-        this.userId = userId;
-    }
-
-    public Long getCategoryId() {
-        return categoryId;
-    }
-
-    public void setCategoryId(Long categoryId) {
-        this.categoryId = categoryId;
-    }
-
+    // Getters y Setters (Asegúrate de tener los de userId y categoryId)
+    public String getName() { return name; }
+    public void setName(String name) { this.name = name; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public Double getPrice() { return price; }
+    public void setPrice(Double price) { this.price = price; }
+    public Integer getStock() { return stock; }
+    public void setStock(Integer stock) { this.stock = stock; }
+    public Long getUserId() { return userId; }
+    public void setUserId(Long userId) { this.userId = userId; }
+    public Long getCategoryId() { return categoryId; }
+    public void setCategoryId(Long categoryId) { this.categoryId = categoryId; }
 }

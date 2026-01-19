@@ -10,11 +10,13 @@ public class UpdateProductsDto {
     @Size(min = 3, message = "El nombre debe tener al menos 3 caracteres")
     private String name;
 
+    @Size(max = 500, message = "La descripción no puede superar 500 caracteres")
+    private String description;
+
     @NotNull(message = "El precio es obligatorio")
     @Min(value = 0, message = "El precio no puede ser negativo") //
     private Double price;
 
-    @NotNull(message = "El stock es obligatorio")
     @Min(value = 0, message = "El stock no puede ser negativo") //
     private Integer stock;
 
@@ -28,6 +30,9 @@ public class UpdateProductsDto {
 
     public Double getPrice() { return price; }
     public void setPrice(Double price) { this.price = price; }
+
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
 
     public Integer getStock() { return stock; }
     public void setStock(Integer stock) { this.stock = stock; }
