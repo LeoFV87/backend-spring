@@ -21,12 +21,12 @@ public class ProductEntity extends BaseModel {
     @Column(nullable = false)
     private Integer stock;
 
-    // Se mantiene la relación 1:N con Usuario (Owner)
+    // Relación 1:N con Usuario (Owner)
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity owner;
 
-    // === CAMBIO CLAVE: Relación N:N con Categorías ===
+    // Relación N:N con Categorías
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(
         name = "product_categories",                    // Tabla intermedia
