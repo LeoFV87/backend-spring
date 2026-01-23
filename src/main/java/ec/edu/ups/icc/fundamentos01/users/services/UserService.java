@@ -2,8 +2,10 @@ package ec.edu.ups.icc.fundamentos01.users.services;
 
 import java.util.List;
 
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 
+import ec.edu.ups.icc.fundamentos01.products.dtos.ProductsResponseDto;
 import ec.edu.ups.icc.fundamentos01.users.dtos.CreateUserDto;
 import ec.edu.ups.icc.fundamentos01.users.dtos.PartialUpdateUserDto;
 import ec.edu.ups.icc.fundamentos01.users.dtos.UpdateUserDto;
@@ -23,4 +25,10 @@ public interface UserService {
     void delete(int id);
 
     Object partialUpdate(int id, PartialUpdateUserDto dto);
+
+    Page<ProductsResponseDto> findProductsByUserIdWithFilters(
+        Long userId, String name, Double minPrice, Double maxPrice, Long categoryId,
+        int page, int size, String[] sort
+    );
+
 }

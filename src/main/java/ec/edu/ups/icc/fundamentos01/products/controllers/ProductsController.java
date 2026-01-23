@@ -75,7 +75,7 @@ public class ProductsController {
 
     @GetMapping
     public ResponseEntity<List<ProductsResponseDto>> findAll() {
-        return ResponseEntity.ok(((ProductServiceImpl) productsService).findAll().stream().toList()); // Helper cast
+        return ResponseEntity.ok(((ProductServiceImpl) productsService).findAll().stream().toList());
     }
 
     @GetMapping("/{id}")

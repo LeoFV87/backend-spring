@@ -113,9 +113,15 @@ public class ProductServiceImpl implements ProductsService {
     @Override
     @Transactional(readOnly = true)
     public Page<ProductsResponseDto> findWithFilters(String name, Double minPrice, Double maxPrice, Long categoryId, int page, int size, String[] sort) {
+    
         validateFilterParameters(minPrice, maxPrice);
         Pageable pageable = createPageable(page, size, sort);
-        return productRepo.findWithFilters(name, minPrice, maxPrice, categoryId, pageable).map(this::toResponseDto);
+
+    // Formateamos el nombre aquí para que el SQL sea más simple y no necesite casteos
+        String nameParam = (name != null && !name.isEmpty()) ? "%" + name + "%" : null;
+
+        return productRepo.findWithFilters(nameParam, minPrice, maxPrice, categoryId, pageable)
+            .map(this::toResponseDto);
     }
 
     @Override
@@ -135,21 +141,33 @@ public class ProductServiceImpl implements ProductsService {
         return PageRequest.of(page, size, createSort(sort));
     }
 
-    private Sort createSort(String[] sort) {
-        if (sort == null || sort.length == 0) return Sort.by("id");
-        List<Sort.Order> orders = new ArrayList<>();
-        for (String sortParam : sort) {
-            String[] parts = sortParam.split(",");
-            String property = parts[0];
-            String direction = parts.length > 1 ? parts[1] : "asc";
-            if (!isValidSortProperty(property)) throw new BadRequestException("Propiedad no válida: " + property);
+   private Sort createSort(String[] sort) {
+    if (sort == null || sort.length == 0) return Sort.by("id");
+
+    List<Sort.Order> orders = new ArrayList<>();
+    for (String sortParam : sort) {
+    
+        if (sortParam.equalsIgnoreCase("asc") || sortParam.equalsIgnoreCase("desc")) continue;
+
+        String[] parts = sortParam.split(",");
+        String property = parts[0];
+        String direction = parts.length > 1 ? parts[1] : "asc";
+
+        if (isValidSortProperty(property)) {
             orders.add("desc".equalsIgnoreCase(direction) ? Sort.Order.desc(property) : Sort.Order.asc(property));
+        } else {
+            throw new BadRequestException("Propiedad de ordenamiento no válida: " + property);
         }
-        return Sort.by(orders);
+     }
+    return orders.isEmpty() ? Sort.by("id") : Sort.by(orders);
     }
 
     private boolean isValidSortProperty(String property) {
-        return Set.of("id", "name", "price", "createdAt", "updatedAt", "owner.name", "category.name").contains(property);
+    Set<String> allowedProperties = Set.of(
+        "id", "name", "price", "createdAt", "updatedAt", 
+        "owner.name", "category.name"
+    );
+     return allowedProperties.contains(property);
     }
 
     private void validateFilterParameters(Double minPrice, Double maxPrice) {

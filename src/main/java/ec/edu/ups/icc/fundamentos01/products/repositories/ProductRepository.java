@@ -30,25 +30,25 @@ public interface ProductRepository extends JpaRepository<ProductEntity, Long> {
     Slice<ProductEntity> findAllSlice(Pageable pageable);
 
     // 2. Filtros Dinámicos + Paginación (Page)
-    @Query("SELECT DISTINCT p FROM ProductEntity p " +
-           "LEFT JOIN p.categories c " +
-           "WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
-           "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
-           "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
-           "AND (:categoryId IS NULL OR c.id = :categoryId)")
+   @Query("SELECT DISTINCT p FROM ProductEntity p " +
+       "LEFT JOIN p.categories c " +
+       "WHERE (:name IS NULL OR LOWER(p.name) LIKE LOWER(:name)) " + 
+       "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
+       "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
+       "AND (:categoryId IS NULL OR c.id = :categoryId)")
     Page<ProductEntity> findWithFilters(
-        @Param("name") String name,
-        @Param("minPrice") Double minPrice,
-        @Param("maxPrice") Double maxPrice,
-        @Param("categoryId") Long categoryId,
-        Pageable pageable
+    @Param("name") String name,
+    @Param("minPrice") Double minPrice,
+    @Param("maxPrice") Double maxPrice,
+    @Param("categoryId") Long categoryId,
+    Pageable pageable
     );
 
     // 3. Productos de Usuario + Filtros + Paginación
     @Query("SELECT DISTINCT p FROM ProductEntity p " +
            "LEFT JOIN p.categories c " +
            "WHERE p.owner.id = :userId " +
-           "AND (:name IS NULL OR LOWER(p.name) LIKE LOWER(CONCAT('%', :name, '%'))) " +
+           "AND (:name IS NULL OR LOWER(CAST(p.name AS string)) LIKE LOWER(CONCAT('%', CAST(:name AS string), '%'))) " +
            "AND (:minPrice IS NULL OR p.price >= :minPrice) " +
            "AND (:maxPrice IS NULL OR p.price <= :maxPrice) " +
            "AND (:categoryId IS NULL OR c.id = :categoryId)")
