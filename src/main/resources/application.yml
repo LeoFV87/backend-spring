@@ -3,11 +3,13 @@ spring:
     name: "fundamentos01"
   
   datasource:
-    url: jdbc:postgresql://localhost:5432/devdb
-    username: ups
+    url: jdbc:postgresql://localhost:5432/db_portafolio
+    username: postgres 
     password: ups123
-  
+    driver-class-name: org.postgresql.Driver
+
   jpa:
+    show-sql: true 
     hibernate:
       ddl-auto: update
     properties:
