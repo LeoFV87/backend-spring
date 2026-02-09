@@ -4,7 +4,7 @@ build/
 bin/
 out/
 
-# Mantener el Wrapper de Gradle para que funcione en tu laptop
+# Wrapper de Gradle 
 !gradle/wrapper/gradle-wrapper.jar
 
 # Logs y archivos temporales del sistema
@@ -21,7 +21,7 @@ Thumbs.db
 # VS Code
 .vscode/
 
-# NetBeans e Eclipse (Opcional, pero recomendado por limpieza)
+# NetBeans e Eclipse 
 .apt_generated/
 .classpath
 .factorypath
@@ -30,3 +30,12 @@ Thumbs.db
 /nbproject/private/
 /nbbuild/
 /dist/
+
+# Archivos y carpetas de prácticas anteriores (09 y 10)
+09_relacion_requestparam.md
+10_paginacion.md
+populate_db.py
+seed_data.sql
+test_relacion_entidades.py
+assets/09/
+assets/10/
