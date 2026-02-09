@@ -1,108 +1,61 @@
 package ec.edu.ups.icc.fundamentos01.users.models;
 
-import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
-import ec.edu.ups.icc.fundamentos01.users.dtos.CreateUserDto;
-import ec.edu.ups.icc.fundamentos01.users.dtos.UpdateUserDto;
-import ec.edu.ups.icc.fundamentos01.users.dtos.UserResponseDto;
+import java.util.List;
 
 public class User {
-
-    private int id;
+    private Long id;
     private String name;
     private String email;
     private String password;
+    private String displayName;
+    private String description;
+    private String photoURL;
+    private String github;
+    private String linkedin;
+    private String role;
+    private String specialty;
+    private List<String> skills;
+    private List<String> availability;
     private String createdAt;
 
-    public User(int id, String name, String email, String password) {
-        if (name == null || name.isBlank()) throw new IllegalArgumentException("Nombre inválido");
-        if (email == null || !email.contains("@")) throw new IllegalArgumentException("Email inválido");
-        if (password == null || password.length() < 8) throw new IllegalArgumentException("Password inválido");
+    //Constructor vacio
+    public User() {}
 
+    //Constructor con parametros esenciales
+    public User(Long id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;
         this.password = password;
-    }
-
-    // Constructor parametrizado para lógica interna
-    public User(int id, String name, String email, String password, String createdAt) {
-        this.id = id;
-        this.name = name;
-        this.email = email;
-        this.password = password;
-        this.createdAt = createdAt;
-    }
-
-    // ==================== FACTORY METHODS ====================
-
-    /**
-     * Crea un User desde un DTO de creación.
-     */
-    public static User fromDto(CreateUserDto dto) {
-        return new User(0, dto.getName(), dto.getEmail(), dto.getPassword());
-    }
-
-    /**
-     * Crea un User desde una entidad persistente recuperada de la BD.
-     */
-    public static User fromEntity(UserEntity entity) {
-        return new User(
-            entity.getId().intValue(),
-            entity.getName(),
-            entity.getEmail(),
-            entity.getPassword()
-        );
-    }
-
-    // ==================== CONVERSION METHODS ====================
-
-    /**
-     * Convierte este User a una entidad persistente lista para Hibernate.
-     */
-    public UserEntity toEntity() {
-        UserEntity entity = new UserEntity();
-        if (this.id > 0) {
-            entity.setId((long) this.id); // int -> Long
-        }
-        entity.setName(this.name);
-        entity.setEmail(this.email);
-        entity.setPassword(this.password);
-        return entity;
-    }
-
-    /**
-     * Convierte este User a un DTO de respuesta sin password.
-     */
-    public UserResponseDto toResponseDto() {
-        UserResponseDto dto = new UserResponseDto();
-        dto.setId(this.id);
-        dto.setName(this.name);
-        dto.setEmail(this.email);
-        dto.setCreatedAt(this.createdAt);
-        return dto;
-    }
-
-    // ==================== LOGICA DE NEGOCIO ====================
-
-    /**
-     * Aplica cambios permitidos en el dominio para una actualización completa.
-     */
-    public User update(UpdateUserDto dto) {
-        this.name = dto.getName();
-        this.email = dto.getEmail();
-        this.password = dto.getPassword();
-        return this;
     }
 
     // Getters y Setters
-    public int getId() { return id; }
-    public void setId(int id) { this.id = id; }
+    public Long getId() { return id; }
+    public void setId(Long id) { this.id = id; }
     public String getName() { return name; }
     public void setName(String name) { this.name = name; }
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
     public String getPassword() { return password; }
     public void setPassword(String password) { this.password = password; }
+    public String getDisplayName() { return displayName; }
+    public void setDisplayName(String displayName) { this.displayName = displayName; }
+    public String getDescription() { return description; }
+    public void setDescription(String description) { this.description = description; }
+    public String getPhotoURL() { return photoURL; }
+    public void setPhotoURL(String photoURL) { this.photoURL = photoURL; }
+    public String getGithub() { return github; }
+    public void setGithub(String github) { this.github = github; }
+    public String getLinkedin() { return linkedin; }
+    public void setLinkedin(String linkedin) { this.linkedin = linkedin; }
+    public String getRole() { return role; }
+    public void setRole(String role) { this.role = role; }
+    public String getSpecialty() { return specialty; }
+    public void setSpecialty(String specialty) { this.specialty = specialty; }
+    public List<String> getSkills() { return skills; }
+    public void setSkills(List<String> skills) { this.skills = skills; }
+    public List<String> getAvailability() { return availability; }
+    public void setAvailability(List<String> availability) { this.availability = availability; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

@@ -1,22 +1,25 @@
 package ec.edu.ups.icc.fundamentos01.users.services;
 
 import java.util.List;
+
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
 import ec.edu.ups.icc.fundamentos01.exception.domain.NotFoundException;
 import ec.edu.ups.icc.fundamentos01.users.dtos.*;
 import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
 import ec.edu.ups.icc.fundamentos01.users.mappers.UserMapper;
-import ec.edu.ups.icc.fundamentos01.users.models.User;
-import ec.edu.ups.icc.fundamentos01.users.repositories.UserRepository;
+import ec.edu.ups.icc.fundamentos01.users.repository.UserRepository;
 
 @Service
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserServiceImpl(UserRepository userRepo) {
+    public UserServiceImpl(UserRepository userRepo, PasswordEncoder passwordEncoder) {
         this.userRepo = userRepo;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -35,12 +38,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto create(CreateUserDto dto) {
-        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-            throw new ConflictException("El email '" + dto.getEmail() + "' ya está registrado");
-        }
-        User user = User.fromDto(dto);
-        UserEntity saved = userRepo.save(user.toEntity());
-        return User.fromEntity(saved).toResponseDto();
+    if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
+        throw new ConflictException("Email ya registrado");
+    }
+
+    UserEntity entity = UserMapper.toEntity(dto);
+    
+    // Aqui se realiza el hash de la contraseña antes de guardar
+    entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+    
+    return UserMapper.toResponse(userRepo.save(entity));
     }
 
     @Override

@@ -1,4 +1,4 @@
-package ec.edu.ups.icc.fundamentos01.users.repositories;
+package ec.edu.ups.icc.fundamentos01.users.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
