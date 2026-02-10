@@ -1,5 +1,6 @@
 package ec.edu.ups.icc.fundamentos01.advisories.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -110,13 +111,13 @@ public class AdvisoryServiceImpl implements AdvisoryService {
             .toList();
     }
 
-    @Override
+   @Override
     public List<AdvisoryResponseDto> findAssignedAdvisories() {
-    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-    String currentEmail = auth.getName();
+    // 1. Obtenemos el email del programador que tiene la sesión abierta
+    String currentEmail = SecurityContextHolder.getContext().getAuthentication().getName();
 
-    return repository.findAll().stream()
-            .filter(a -> a.getProgrammerId().equalsIgnoreCase(currentEmail))
+    // 2. Le pedimos al repositorio que busque directamente por ese email
+    return repository.findByProgrammerId(currentEmail).stream()
             .map(AdvisoryMapper::toResponse)
             .toList();
     }
@@ -125,13 +126,45 @@ public class AdvisoryServiceImpl implements AdvisoryService {
     public Map<String, Long> getAdminStats() {
     return Map.of(
         "total", repository.count(),
-        "pending", repository.countByStatus("PENDING"),
-        "accepted", repository.countByStatus("ACCEPTED"),
-        "rejected", repository.countByStatus("REJECTED")
+        "pending", repository.countByStatusIgnoreCase("PENDING"),
+        "accepted", repository.countByStatusIgnoreCase("ACCEPTED"),
+        "rejected", repository.countByStatusIgnoreCase("REJECTED")
     );
+  }
+
+  @Override
+    public Map<String, Long> getAdvisoryStats() {
+        Map<String, Long> stats = new HashMap<>();
+        try {
+            stats.put("pending", repository.countByStatusIgnoreCase("pending"));
+            stats.put("accepted", repository.countByStatusIgnoreCase("accepted"));
+            stats.put("rejected", repository.countByStatusIgnoreCase("rejected"));
+         } catch (Exception e) {
+             // Si algo falla, devolvemos todo en cero para que el gráfico no rompa el front
+            stats.put("pending", 0L);
+            stats.put("accepted", 0L);
+            stats.put("rejected", 0L);
+        }
+     return stats;
     }
 
 
+    @Override
+    public void respondAdvisory(Long id, String status, String replyMessage) {
+         // 1. Buscamos la asesoría. Si no existe, lanzamos error claro.
+         AdvisoryEntity advisory = repository.findById(id)
+            .orElseThrow(() -> new RuntimeException("No existe la asesoría con ID: " + id));
+
+        // 2. Limpiamos el status (Angular a veces manda espacios o mayúsculas)
+        if (status != null) {
+        advisory.setStatus(status.trim().toLowerCase()); 
+    }
+    
+         advisory.setReplyMessage(replyMessage != null ? replyMessage : "Sin mensaje adicional");
+    
+        // 3. Guardamos
+        repository.save(advisory);
+    }
 
 
 }

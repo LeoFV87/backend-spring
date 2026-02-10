@@ -15,5 +15,8 @@ public interface AdvisoryService {
     AdvisoryResponseDto updateStatus(Long id, String status, String replyMessage);
     void delete(Long id);
     Map<String, Long> getAdminStats();
+    Map<String, Long> getAdvisoryStats();
+    void respondAdvisory(Long id, String status, String replyMessage);
+  
 
 }

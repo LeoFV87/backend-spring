@@ -2,6 +2,8 @@ package ec.edu.ups.icc.fundamentos01.advisories.controllers;
 
 import java.util.List;
 import java.util.Map;
+
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ec.edu.ups.icc.fundamentos01.advisories.dtos.*;
 import ec.edu.ups.icc.fundamentos01.advisories.services.AdvisoryService;
@@ -63,10 +65,28 @@ public class AdvisoryController {
         );
     }
 
-    @GetMapping("/stats")
-    public Map<String, Long> getStats() {
-        return service.getAdminStats();
+    @GetMapping("/stats/admin")
+    public Map<String, Long> getAdminStats() {
+    return service.getAdminStats();
     }
+
+    @GetMapping("/stats/advisories")
+    public Map<String, Long> getAdvisoryStats() {
+    return service.getAdvisoryStats(); 
+    }
+
+    @PutMapping("/{id}/respond")
+    public ResponseEntity<?> respond(@PathVariable Long id, @RequestBody Map<String, String> request) {
+    try {
+        service.respondAdvisory(id, request.get("status"), request.get("replyMessage"));
+        return ResponseEntity.ok().build();
+    } catch (Exception e) {
+        // Esto imprimirá el error real en la consola de Spring Boot
+        e.printStackTrace(); 
+        return ResponseEntity.status(500).body("Error: " + e.getMessage());
+    }
+}
+    
 
 
 }

@@ -6,20 +6,25 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
 import ec.edu.ups.icc.fundamentos01.exception.domain.NotFoundException;
+import ec.edu.ups.icc.fundamentos01.schedules.repository.ScheduleRepository;
 import ec.edu.ups.icc.fundamentos01.users.dtos.*;
 import ec.edu.ups.icc.fundamentos01.users.entities.UserEntity;
 import ec.edu.ups.icc.fundamentos01.users.mappers.UserMapper;
 import ec.edu.ups.icc.fundamentos01.users.repository.UserRepository;
+import jakarta.transaction.Transactional;
 
 @Service
+@Transactional
 public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepo;
     private final PasswordEncoder passwordEncoder;
+    private final ScheduleRepository scheduleRepo;
 
-    public UserServiceImpl(UserRepository userRepo, PasswordEncoder passwordEncoder) {
+    public UserServiceImpl(UserRepository userRepo, PasswordEncoder passwordEncoder, ScheduleRepository scheduleRepo) {
         this.userRepo = userRepo;
         this.passwordEncoder = passwordEncoder;
+        this.scheduleRepo = scheduleRepo;
     }
 
     @Override
@@ -34,7 +39,10 @@ public class UserServiceImpl implements UserService {
     public UserResponseDto updateMyProfile(UpdateProfileDto dto) {
         String email = SecurityContextHolder.getContext().getAuthentication().getName();
         UserEntity entity = userRepo.findByEmail(email)
-                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+            .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
+        System.out.println("📥 DTO RECIBIDO: " + dto);
+        System.out.println("⏰ HORARIOS EN DTO: " + dto.availability());
 
         UserMapper.updateEntity(entity, dto);
         return UserMapper.toResponse(userRepo.save(entity));
@@ -106,4 +114,28 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
         userRepo.delete(entity);
     }
+
+
+    @Override
+    public List<UserResponseDto> findByRole(String role) {
+    // IMPORTANTE: Asegúrate de que en la base de datos el rol esté guardado 
+    // exactamente como lo envías (ej: "programmer" en minúsculas).
+    return userRepo.findByRoleIgnoreCase(role).stream()
+            .map(UserMapper::toResponse)
+            .toList();
+    }
+
+    @Override
+    public List<String> getAvailability(Long id) {
+    // Primero buscamos al usuario por ID para obtener su email
+    UserEntity user = userRepo.findById(id)
+            .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
+    // Ahora buscamos en la tabla 'schedules' usando ese email
+    return scheduleRepo.findByProgrammerEmail(user.getEmail()).stream()
+            .map(schedule -> schedule.getTimeSlot()) // Suponiendo que el campo se llama timeSlot
+            .toList();
+
+    }
+
 }

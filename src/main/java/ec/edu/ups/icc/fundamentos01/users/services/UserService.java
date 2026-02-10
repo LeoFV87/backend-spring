@@ -13,4 +13,6 @@ public interface UserService {
     UserResponseDto partialUpdate(int id, PartialUpdateUserDto dto);
     UserResponseDto changeRole(int id, String role);
     void delete(int id);
+    List<String> getAvailability(Long id);
+    List<UserResponseDto> findByRole(String role);
 }

@@ -39,6 +39,7 @@ public class SecurityConfig {
         .authorizeHttpRequests(auth -> auth
        
             //Permisos públicos
+            .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .requestMatchers("/api/auth/**").permitAll() 
             .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // Registro
             .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll() // Ver programadores/perfiles

@@ -8,5 +8,6 @@ public record UpdateProfileDto(
     String photoURL,
     String linkedin,
     String github,
-    List<String> skills
+    List<String> skills,
+    List<String> availability
 ) {}

@@ -29,13 +29,13 @@ public class UserEntity extends BaseModel {
     private String specialty;
 
   
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_skills", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "skill")
     private List<String> skills;
 
     
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "user_availability", joinColumns = @JoinColumn(name = "user_id"))
     @Column(name = "slot")
     private List<String> availability;

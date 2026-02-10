@@ -1,5 +1,7 @@
 package ec.edu.ups.icc.fundamentos01.advisories.repository;
 
+import java.util.List;
+
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import ec.edu.ups.icc.fundamentos01.advisories.entities.AdvisoryEntity;
@@ -8,6 +10,8 @@ import ec.edu.ups.icc.fundamentos01.advisories.entities.AdvisoryEntity;
 
 public interface AdvisoryRepository extends JpaRepository<AdvisoryEntity, Long> {
 
-    long countByStatus(String status);
+    long countByStatusIgnoreCase(String status);
+    List<AdvisoryEntity> findByProgrammerId(String programmerId);
+ 
     
 }

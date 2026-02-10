@@ -11,5 +11,6 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 
     List<ScheduleEntity> findByProgrammerEmailIgnoreCase(String email);
     Optional<ScheduleEntity> findByProgrammerEmailAndTimeSlot(String email, String timeSlot);
+    List<ScheduleEntity> findByProgrammerEmail(String email);
     
 }
