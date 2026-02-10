@@ -7,13 +7,10 @@ public interface UserService {
     List<UserResponseDto> findAll();
     UserResponseDto findOne(int id);
     UserResponseDto create(CreateUserDto dto);
+    UserResponseDto findMyProfile();
+    UserResponseDto updateMyProfile(UpdateProfileDto dto);
     UserResponseDto update(int id, UpdateUserDto dto);
     UserResponseDto partialUpdate(int id, PartialUpdateUserDto dto);
+    UserResponseDto changeRole(int id, String role);
     void delete(int id);
 }
-
- /* 
-    Page<ProductsResponseDto> findProductsByUserIdWithFilters(
-        Long userId, String name, Double minPrice, Double maxPrice, Long categoryId,
-        int page, int size, String[] sort
-    );*/

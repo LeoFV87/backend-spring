@@ -1,6 +1,8 @@
 package ec.edu.ups.icc.fundamentos01.advisories.services;
 
 import java.util.List;
+import java.util.Map;
+
 import org.springframework.stereotype.Service;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.Authentication;
@@ -96,4 +98,40 @@ public class AdvisoryServiceImpl implements AdvisoryService {
         validateOwnership(entity);
         repository.delete(entity);
     }
+
+    @Override
+    public List<AdvisoryResponseDto> findMyAdvisories() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String currentEmail = auth.getName();
+
+    return repository.findAll().stream()
+            .filter(a -> a.getClientEmail().equalsIgnoreCase(currentEmail))
+            .map(AdvisoryMapper::toResponse)
+            .toList();
+    }
+
+    @Override
+    public List<AdvisoryResponseDto> findAssignedAdvisories() {
+    Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+    String currentEmail = auth.getName();
+
+    return repository.findAll().stream()
+            .filter(a -> a.getProgrammerId().equalsIgnoreCase(currentEmail))
+            .map(AdvisoryMapper::toResponse)
+            .toList();
+    }
+
+    @Override
+    public Map<String, Long> getAdminStats() {
+    return Map.of(
+        "total", repository.count(),
+        "pending", repository.countByStatus("PENDING"),
+        "accepted", repository.countByStatus("ACCEPTED"),
+        "rejected", repository.countByStatus("REJECTED")
+    );
+    }
+
+
+
+
 }

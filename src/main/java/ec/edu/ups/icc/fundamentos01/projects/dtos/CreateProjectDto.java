@@ -1,6 +1,7 @@
 package ec.edu.ups.icc.fundamentos01.projects.dtos;
 
 import jakarta.validation.constraints.*;
+import java.util.List; 
 
 public class CreateProjectDto {
 
@@ -16,7 +17,7 @@ public class CreateProjectDto {
     private String role;
     private String type;
     private String programmerId;
-    private String technologies;
+    private List<String> technologies; 
 
     // Getters y Setters
     public String getTitle() { return title; }
@@ -35,6 +36,6 @@ public class CreateProjectDto {
     public void setType(String type) { this.type = type; }
     public String getProgrammerId() { return programmerId; }
     public void setProgrammerId(String programmerId) { this.programmerId = programmerId; }
-    public String getTechnologies() { return technologies; }
-    public void setTechnologies(String technologies) { this.technologies = technologies; }
+    public List<String> getTechnologies() { return technologies; }
+    public void setTechnologies(List<String> technologies) { this.technologies = technologies; }
 }

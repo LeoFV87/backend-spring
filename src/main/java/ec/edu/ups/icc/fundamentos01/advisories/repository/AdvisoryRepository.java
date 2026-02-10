@@ -7,5 +7,7 @@ import ec.edu.ups.icc.fundamentos01.advisories.entities.AdvisoryEntity;
 @Repository
 
 public interface AdvisoryRepository extends JpaRepository<AdvisoryEntity, Long> {
+
+    long countByStatus(String status);
     
 }

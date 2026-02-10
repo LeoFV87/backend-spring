@@ -1,7 +1,7 @@
 package ec.edu.ups.icc.fundamentos01.users.services;
 
 import java.util.List;
-
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import ec.edu.ups.icc.fundamentos01.exception.domain.ConflictException;
@@ -23,10 +23,37 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    public UserResponseDto findMyProfile() {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        return userRepo.findByEmail(email)
+                .map(UserMapper::toResponse)
+                .orElseThrow(() -> new NotFoundException("Perfil no encontrado"));
+    }
+
+    @Override
+    public UserResponseDto updateMyProfile(UpdateProfileDto dto) {
+        String email = SecurityContextHolder.getContext().getAuthentication().getName();
+        UserEntity entity = userRepo.findByEmail(email)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado"));
+
+        UserMapper.updateEntity(entity, dto);
+        return UserMapper.toResponse(userRepo.save(entity));
+    }
+
+    @Override
+    public UserResponseDto changeRole(int id, String role) {
+        UserEntity entity = userRepo.findById((long) id)
+                .orElseThrow(() -> new NotFoundException("Usuario no encontrado con ID: " + id));
+
+        entity.setRole(role);
+        return UserMapper.toResponse(userRepo.save(entity));
+    }
+
+    @Override
     public List<UserResponseDto> findAll() {
         return userRepo.findAll().stream()
-                .map(UserMapper::toResponse)
-                .toList();
+            .map(UserMapper::toResponse)
+            .toList();
     }
 
     @Override
@@ -38,16 +65,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserResponseDto create(CreateUserDto dto) {
-    if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
-        throw new ConflictException("Email ya registrado");
-    }
+        if (userRepo.findByEmail(dto.getEmail()).isPresent()) {
+            throw new ConflictException("Email ya registrado");
+        }
 
-    UserEntity entity = UserMapper.toEntity(dto);
-    
-    // Aqui se realiza el hash de la contraseña antes de guardar
-    entity.setPassword(passwordEncoder.encode(dto.getPassword()));
-    
-    return UserMapper.toResponse(userRepo.save(entity));
+        UserEntity entity = UserMapper.toEntity(dto);
+        entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        
+        return UserMapper.toResponse(userRepo.save(entity));
     }
 
     @Override
@@ -57,7 +82,9 @@ public class UserServiceImpl implements UserService {
 
         entity.setName(dto.getName());
         entity.setEmail(dto.getEmail());
-        if (dto.getPassword() != null) entity.setPassword(dto.getPassword());
+        if (dto.getPassword() != null) {
+            entity.setPassword(passwordEncoder.encode(dto.getPassword()));
+        }
 
         return UserMapper.toResponse(userRepo.save(entity));
     }

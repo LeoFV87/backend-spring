@@ -8,7 +8,10 @@ import ec.edu.ups.icc.fundamentos01.projects.entities.ProjectEntity;
 
 
 public interface ProjectService {
+
     List<ProjectResponseDto> findAll();
+    List<ProjectResponseDto> findMyProjects(); 
+    List<ProjectResponseDto> findByProgrammerId(Long id);
     ProjectEntity findOne(Long id);
     ProjectResponseDto create(CreateProjectDto dto);
     ProjectEntity update(Long id, ProjectEntity entity);

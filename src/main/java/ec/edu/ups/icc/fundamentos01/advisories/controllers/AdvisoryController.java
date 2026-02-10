@@ -17,14 +17,25 @@ public class AdvisoryController {
         this.service = service;
     }
 
-     // El servicio filtrará automáticamente si es que es solo user 
-     // O un administrador
+    // 1. Obtener todas (Admin)
     @GetMapping
     public List<AdvisoryResponseDto> getAll() {
         return service.findAll();
     }
 
-    // Si no es tu asesoria lanza el error 403 Forbidden
+    // 2. Obtener asesorías del cliente logueado
+    @GetMapping("/my-advisories")
+    public List<AdvisoryResponseDto> getMyAdvisories() {
+        return service.findMyAdvisories();
+    }
+
+    // 3. Obtener asesorías asignadas al programador logueado
+    @GetMapping("/assigned")
+    public List<AdvisoryResponseDto> getAssigned() {
+        return service.findAssignedAdvisories();
+    }
+
+    // 4. Obtener una por ID (Mantenla después de las rutas fijas)
     @GetMapping("/{id}")
     public AdvisoryResponseDto getOne(@PathVariable Long id) {
         return service.findOne(id);
@@ -40,8 +51,6 @@ public class AdvisoryController {
             @PathVariable Long id, 
             @RequestParam String status,
             @RequestParam(required = false) String replyMessage) {
-
-        // Solo si eres el dueño (programador) o ADMIN podras cambiar el estado
         return service.updateStatus(id, status, replyMessage);
     }
 
@@ -53,4 +62,11 @@ public class AdvisoryController {
             "id", id
         );
     }
+
+    @GetMapping("/stats")
+    public Map<String, Long> getStats() {
+        return service.getAdminStats();
+    }
+
+
 }

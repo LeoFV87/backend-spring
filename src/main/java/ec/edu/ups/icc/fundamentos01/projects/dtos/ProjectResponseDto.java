@@ -1,5 +1,7 @@
 package ec.edu.ups.icc.fundamentos01.projects.dtos;
 
+import java.util.List;
+
 public class ProjectResponseDto {
     private Long id;
     private String title;
@@ -10,7 +12,7 @@ public class ProjectResponseDto {
     private String role;
     private String type;
     private String programmerId;
-    private String technologies;
+    private List<String> technologies; 
     private String createdAt;
 
     // Getters y Setters
@@ -32,8 +34,8 @@ public class ProjectResponseDto {
     public void setType(String type) { this.type = type; }
     public String getProgrammerId() { return programmerId; }
     public void setProgrammerId(String programmerId) { this.programmerId = programmerId; }
-    public String getTechnologies() { return technologies; }
-    public void setTechnologies(String technologies) { this.technologies = technologies; }
+    public List<String> getTechnologies() { return technologies; }
+    public void setTechnologies(List<String> technologies) { this.technologies = technologies; }
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

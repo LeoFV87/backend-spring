@@ -1,5 +1,7 @@
 package ec.edu.ups.icc.fundamentos01.projects.models;
 
+import java.util.List; 
+
 public class Project {
     private Long id;
     private String title;
@@ -10,13 +12,12 @@ public class Project {
     private String role;
     private String type;
     private String programmerId;
-    private String technologies;
+    private List<String> technologies; 
     private String createdAt;
 
-    //Constructor vacio
     public Project() {}
 
-    // Getters y Setters
+    // Getters y Setters actualizados
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }
     public String getTitle() { return title; }
@@ -35,8 +36,9 @@ public class Project {
     public void setType(String type) { this.type = type; }
     public String getProgrammerId() { return programmerId; }
     public void setProgrammerId(String programmerId) { this.programmerId = programmerId; }
-    public String getTechnologies() { return technologies; }
-    public void setTechnologies(String technologies) { this.technologies = technologies; }
+    
+    public List<String> getTechnologies() { return technologies; } 
+    public void setTechnologies(List<String> technologies) { this.technologies = technologies; } 
     public String getCreatedAt() { return createdAt; }
     public void setCreatedAt(String createdAt) { this.createdAt = createdAt; }
 }

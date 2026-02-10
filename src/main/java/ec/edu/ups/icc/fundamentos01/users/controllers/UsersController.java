@@ -17,6 +17,18 @@ public class UsersController {
         this.service = service;
     }
 
+  
+    @GetMapping("/profile")
+    public UserResponseDto getMyProfile() {
+        return service.findMyProfile();
+    }
+
+  
+    @PutMapping("/profile")
+    public UserResponseDto updateMyProfile(@Valid @RequestBody UpdateProfileDto dto) {
+        return service.updateMyProfile(dto);
+    }
+
     @GetMapping
     public List<UserResponseDto> findAll() {
         return service.findAll();
@@ -46,5 +58,10 @@ public class UsersController {
     public Map<String, Object> delete(@PathVariable int id) {
         service.delete(id); 
         return Map.of("message", "Deleted successfully", "id", id);
+    }
+
+    @PatchMapping("/{id}/role")
+    public UserResponseDto changeRole(@PathVariable int id, @RequestParam String role) {
+        return service.changeRole(id, role);
     }
 }
