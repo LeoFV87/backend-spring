@@ -1,112 +1,178 @@
 # Universidad Politécnica Salesiana
 
-
-![Logo Institucional](https://upload.wikimedia.org/wikipedia/commons/b/b0/Logo_Universidad_Polit%C3%A9cnica_Salesiana_del_Ecuador.png)  
+![Logo Institucional](https://upload.wikimedia.org/wikipedia/commons/b/b0/Logo_Universidad_Polit%C3%A9cnica_Salesiana_del_Ecuador.png)
 
 ---
-
 
 # 🚀 DOCUMENTACIÓN TÉCNICA: SISTEMA "LEMIBIT" V2.0
 ## Gestión Integral de Portafolios y Asesorías Técnicas con Arquitectura Distribuida
 
+<div align="center">
 
-**Autor:** Leo Vásconez  
-**Carrera:** Ingeniería en Ciencias de la Computación  
-**Sede:** Cuenca, Ecuador  
-**Materia:** Programación Web  
-**Fecha:** Febrero 2026  
+![Java](https://img.shields.io/badge/Java-17-orange?style=for-the-badge&logo=openjdk)
+![Spring Boot](https://img.shields.io/badge/Spring%20Boot-4.0.1-brightgreen?style=for-the-badge&logo=spring)
+![Angular](https://img.shields.io/badge/Angular-20-red?style=for-the-badge&logo=angular)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-16-blue?style=for-the-badge&logo=postgresql)
+![JWT](https://img.shields.io/badge/JWT-Auth-purple?style=for-the-badge&logo=jsonwebtokens)
 
----
+**Autor:** Leo Vásconez • **Carrera:** Ingeniería en Ciencias de la Computación
+**Sede:** Cuenca, Ecuador • **Materia:** Programación Web
+**Periodo Lectivo:** Octubre - Febrero 2026
 
-## 1. INTRODUCCIÓN Y JUSTIFICACIÓN DEL PROYECTO
-
-En el ecosistema actual del desarrollo de software, la visibilidad del talento técnico es fundamental. **LeMiBit** nace como una solución para centralizar el portafolio de desarrolladores, permitiendo una transición fluida entre la academia y el mundo laboral. 
-
-La versión 2.0 representa una evolución crítica: se migró de un modelo Serverless básico hacia una arquitectura **Monolito Modular** con un backend robusto en Spring Boot y una base de datos relacional PostgreSQL, permitiendo un control total sobre la seguridad y la persistencia de los datos.
-
+</div>
 
 ---
 
+## 📖 1. Resumen del Proyecto
 
-## 2. ESPECIFICACIONES DEL STACK TECNOLÓGICO (FULL STACK)
-
-
-### **2.1. Backend: El Motor con Spring Boot 3.4**
-Se implementó un backend basado en Java 21, aprovechando las últimas mejoras en rendimiento y gestión de hilos.
-* **Gestor de Dependencias:** Se utilizó **Gradle con Kotlin DSL (`build.gradle.kts`)**, lo que permitió una configuración más limpia y tipada, facilitando la detección de errores en tiempo de compilación.
-* **Seguridad:** Implementación de **Spring Security** con una política de sesión **Stateless** mediante **JSON Web Tokens (JWT)**.
-* **Documentación:** Integración de **SpringDoc OpenAPI 2.8.5**, configurada para ser compatible con el filtro de seguridad JWT, permitiendo la interacción con la API en tiempo real.
-
-
-
-
-### **2.2. Frontend: Interfaz Reactiva con Angular 20**
-El frontend fue diseñado para ser una **Single Page Application (SPA)** de alto rendimiento.
-* **Gestión de Estado:** Migración total a **Angular Signals**, eliminando la necesidad de chequeos de cambios globales y optimizando la velocidad de respuesta de la UI.
-* **Estilos:** Uso de **TailwindCSS** para un diseño atómico y **DaisyUI** para componentes de interfaz consistentes y accesibles.
-* **Librerías Externas:** **Chart.js** para la capa analítica y **XLSX (SheetJS)** para la transformación de datos JSON a archivos binarios de Excel.
-
-
-### **2.3. Base de Datos: PostgreSQL 16**
-Se eligió PostgreSQL por su robustez en el manejo de relaciones complejas.
-* **Esquema Relacional:** Definición estricta de tablas para Usuarios, Roles, Proyectos y Asesorías, garantizando que no existan datos huérfanos mediante llaves foráneas y restricciones de integridad.
-
-
+**LeMiBit** es una aplicación web de arquitectura distribuida diseñada para la gestión de portafolios multiusuario. El sistema permite centralizar proyectos técnicos y gestionar solicitudes de asesoría entre programadores y usuarios externos. La versión 2.0 consolida el uso de un **Backend en Spring Boot** y persistencia en **PostgreSQL**, cumpliendo con los estándares de seguridad JWT exigidos por la cátedra.
 
 ---
 
+## 🏗️ 2. Arquitectura del Sistema
+
+El sistema implementa una **Arquitectura en Capas (Layered Architecture)** para separar la presentación, la lógica de negocio y la persistencia de datos.
+
+### 2.1 Diagrama de Flujo de Datos
+
+```mermaid
+graph TD
+    subgraph "Frontend (Angular 20)"
+        A[Interfaz de Usuario] --> B[AuthInterceptor]
+    end
+    
+    subgraph "Backend (Spring Boot 4.0.1)"
+        B -->|JWT Token| C[Security Filter]
+        C --> D[REST Controllers]
+        D --> E[Services Layer]
+        E --> F[Repositories / JPA]
+    end
+    
+    subgraph "Persistencia"
+        F --> G[(PostgreSQL 16)]
+    end
+    
+    subgraph "Servicios Externos"
+        E --> H[EmailJS / JavaMail]
+        E --> I[WhatsApp Deep Linking]
+    end
+```
 
 
-## 3. ARQUITECTURA DE SEGURIDAD (JWT HANDSHAKE)
 
+### 2.2 Mapa del Repositorio (Estructura de Carpetas)
 
-La seguridad es el pilar de LeMiBit. Se diseñó un flujo de autenticación cerrado para proteger los datos de los programadores:
-1.  **Encriptación:** Las contraseñas se procesan mediante el algoritmo **BCrypt** antes de tocar la base de datos.
-2.  **Generación de Token:** Tras un login exitoso, el backend emite un token firmado con una clave secreta personalizada.
-3.  **Interceptor de Peticiones:** En Angular, se configuró un `AuthInterceptor` que añade automáticamente el encabezado `Authorization: Bearer <token>` a cada solicitud hacia el servidor.
-4.  **Filtro de Seguridad:** El backend intercepta la petición, valida la firma del token y el rol del usuario antes de entregar los datos.
-
+```text
+LeMiBit-V2/
+├── backend-spring/                 # Motor de la aplicación (Java 21)
+│   ├── src/main/java/ec/edu/ups/icc/
+│   │   ├── auth/                   # Gestión de JWT y autenticación
+│   │   ├── config/                 # SecurityConfig, CORS y Swagger
+│   │   ├── advisory/               # Módulo de asesorías y estados
+│   │   ├── projects/               # CRUD de portafolios y proyectos
+│   │   ├── users/                  # Manejo de roles y perfiles
+│   │   └── utils/                  # Excepciones globales y EmailService
+│   └── build.gradle.kts            # Dependencias con Kotlin DSL
+├── frontend-angular/               # Interfaz reactiva (Angular 20)
+│   ├── src/app/core/               # Interceptors, Guards y Servicios base
+│   ├── src/app/modules/            # Módulos por rol: Admin, Programmer, Auth
+│   ├── src/app/shared/             # Componentes comunes (Navbar, Footer)
+│   └── tailwind.config.js          # Estilos atómicos con DaisyUI
+└── docker-compose.yml              # Orquestación de base de datos local
+```
 
 ---
 
-## 4. MÓDULOS DEL SISTEMA Y LÓGICA DE NEGOCIO
+## 🛠️ 3. Especificaciones del Stack Tecnológico
 
-### **4.1. Dashboard Analítico (Business Intelligence)**
-El Administrador tiene acceso a un panel visual donde se consumen los datos de las asesorías para generar métricas:
-* **Algoritmo de Filtrado:** Los datos se agrupan en el frontend para alimentar gráficos de pastel que muestran el porcentaje de efectividad de los programadores (Aceptadas vs. Rechazadas).
-
-### **4.2. Sistema de Reportería Pro**
-Se implementó un servicio de exportación que permite:
-* Mapear objetos de la base de datos a celdas de Excel.
-* Generar archivos descargables con metadatos del sistema, permitiendo auditorías externas del rendimiento de los asesores.
-
-### **4.3. Notificaciones Duales (WhatsApp & EmailJS)**
-Al procesar una solicitud de asesoría, el sistema ejecuta una lógica de notificación inmediata:
-* **EmailJS:** Se configuró un servicio que dispara un correo electrónico profesional al cliente, ocultando los detalles del servidor SMTP para mayor seguridad.
-* **Deep Linking:** El sistema construye una URL de WhatsApp dinámica basada en el número del cliente y el mensaje personalizado, optimizando el tiempo de respuesta del programador.
+* **Backend:** Java 21 LTS con Spring Boot 3.4. Implementación de **Spring Security** con política Stateless mediante JWT[cite: 30].
+* **Frontend:** Angular 20 SPA utilizando **Signals** para una reactividad optimizada.
+* **Base de Datos:** PostgreSQL 16 para garantizar la integridad relacional mediante llaves foráneas[cite: 28].
+* **Documentación:** Integración de **SpringDoc OpenAPI 2.8.5** (Swagger) para el testeo de endpoints[cite: 51].
 
 ---
 
-## 5. RESOLUCIÓN DE DESAFÍOS TÉCNICOS (LOG DE DESARROLLO)
+## 📊 4. Funcionalidades y Lógica de Negocio
 
-Durante la ejecución del proyecto, se resolvieron problemas críticos de ingeniería:
-* **Conflicto de Versiones en Swagger:** Se detectó un error `NoSuchMethodError` debido a una incompatibilidad entre Spring Boot 3 y versiones antiguas de SpringDoc. Se resolvió forzando la versión **2.8.5** en el archivo de Gradle.
-* **Error de Permisos EPERM:** Durante la migración de **NPM** a **pnpm**, se experimentaron bloqueos de archivos en Windows. La solución técnica fue revertir a NPM y limpiar la caché de `node_modules` para restaurar la integridad de los enlaces simbólicos de Angular.
-* **Políticas de Ejecución:** Se configuró el entorno de PowerShell mediante `Set-ExecutionPolicy` para permitir la ejecución de scripts del CLI de Angular, esencial para el despliegue local.
-* **Migración de Datos Remota:** Se implementaron flujos de respaldo mediante `pg_dump` y túneles remotos (Parsec) para mantener la consistencia de la base de datos entre diferentes estaciones de trabajo.
-
-
+* **Gestión de Asesorías:** Registro de horarios de disponibilidad y gestión de solicitudes[cite: 37].
+* **Dashboard Analítico:** Visualización de métricas de efectividad mediante gráficos (Aprobadas vs Rechazadas)[cite: 38].
+* **Notificaciones Duales:** Envío de correos vía EmailJS y contacto directo por WhatsApp[cite: 40, 42].
+* **Reportería Profesional:** Exportación de datos a formatos Excel (.xlsx) y PDF[cite: 47].
 
 ---
 
-## 6. CONCLUSIONES Y TRABAJO FUTURO
+## 📡 5. Mapa de Endpoints (API REST)
 
-El proyecto LeMiBit V2.0 demuestra que es posible integrar un stack tecnológico moderno (Spring + Angular) para crear aplicaciones escalables y seguras. La implementación de **JWT**, la documentación con **Swagger** y la analítica con **Chart.js** elevan el proyecto a un nivel profesional.
-
-**Próximos Pasos:**
-* Implementación de contenedores **Docker** para el despliegue simplificado.
-* Añadir almacenamiento en la nube (AWS S3) para los archivos multimedia de los proyectos.
-* Integración de pasarelas de pago para las asesorías premium.
+| Módulo | Endpoint | Método | Descripción | Autenticación |
+| :--- | :--- | :--- | :--- | :--- |
+| **Auth** | `/api/auth/login` | POST | Valida credenciales y entrega JWT | Pública |
+| **Auth** | `/api/auth/register` | POST | Registra nuevos usuarios | Pública |
+| **Users** | `/api/users/profile` | GET | Recupera el perfil del usuario logueado | Requerida |
+| **Users** | `/api/users/{id}/role` | PATCH | Cambia el rol de un usuario (Admin) | ROLE_ADMIN |
+| **Advisory** | `/api/advisories` | POST | Crea una solicitud de asesoría | Requerida |
+| **Advisory** | `/api/advisories/stats` | GET | Estadísticas para el dashboard | Requerida |
 
 ---
+
+## 📓 6. Log de Desarrollo: Desafíos Técnicos
+
+* **Migración Relacional:** Transición de Firebase a PostgreSQL con rediseño de esquema OneToMany[cite: 28].
+* **Reflexión de Parámetros:** Resolución del error `IllegalArgumentException` mediante nombres explícitos en `@PathVariable`.
+* **Conflicto de Swagger:** Corrección de `NoSuchMethodError` mediante la versión 2.8.5 de SpringDoc.
+* **Persistencia Local:** Implementación de `AuthInterceptor` para mantener sesión tras recargar (`F5`).
+
+---
+
+## 📘 7. Guía de Usuario (Entregable Nro. 4)
+
+### 7.1 Rol Administrador
+1. **Acceso:** Iniciar sesión con credenciales administrativas.
+2. **Dashboard Global:** Visualizar gráficos de rendimiento de asesorías de todos los programadores registrados.
+3. **Gestión de Roles:** Acceder a la lista de usuarios y asignar el rol de 'Programador' a los usuarios nuevos para que puedan gestionar portafolios.
+
+### 7.2 Rol Programador
+1. **Perfil y Portafolio:** Configurar descripción profesional, habilidades técnicas y enlaces sociales.
+2. **Proyectos:** Agregar proyectos indicando título, URL de repositorio, rol (Frontend/Backend) y categoría.
+3. **Asesorías:**
+   * Establecer días y horarios de disponibilidad.
+   * Revisar solicitudes pendientes en el panel y proceder a **Aprobar** o **Rechazar**.
+   * Contactar al cliente vía WhatsApp mediante el enlace dinámico generado.
+
+### 7.3 Usuario Externo / Cliente
+1. **Exploración:** Navegar por la página de inicio para buscar programadores por especialidad.
+2. **Solicitud:** Seleccionar un programador y completar el formulario de asesoría con fecha, hora y nota técnica.
+3. **Seguimiento:** Esperar la notificación por correo sobre el estado de la solicitud.
+
+---
+
+## ⚙️ 8. Configuración y Ejecución
+
+### 8.1 Requisitos Previos
+* Java JDK 21
+* Node.js v20+
+* PostgreSQL 16 activo en puerto 5432.
+
+### 8.2 Pasos de Instalación
+
+**Backend:**
+```bash
+cd backend-spring
+./gradlew bootRun
+```
+
+**Frontend:**
+```bash
+cd frontend-angular
+npm install
+ng serve
+```
+
+---
+
+<div align="center">
+
 **© 2026 - Leo Vásconez - Universidad Politécnica Salesiana**
+*Proyecto Integrador - Programación y Plataformas Web*
+*Docente: Ing. Pablo Andres Torres Peña*
+
+</div>

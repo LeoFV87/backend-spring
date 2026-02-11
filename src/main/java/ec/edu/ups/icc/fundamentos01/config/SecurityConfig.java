@@ -24,7 +24,6 @@ public class SecurityConfig {
     private final JwtUtils jwtUtils;
     private final UserDetailsService userDetailsService;
 
-    // Se inyectan las dependencias necesarias para el filtro
     public SecurityConfig(JwtUtils jwtUtils, UserDetailsService userDetailsService) {
         this.jwtUtils = jwtUtils;
         this.userDetailsService = userDetailsService;
@@ -38,14 +37,13 @@ public class SecurityConfig {
         .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         .authorizeHttpRequests(auth -> auth
        
-            //Permisos públicos
+            // Permisos públicos para documentación y autenticación
             .requestMatchers("/v3/api-docs", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
             .requestMatchers("/api/auth/**").permitAll() 
             .requestMatchers(HttpMethod.POST, "/api/users").permitAll() // Registro
-            .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll() // Ver programadores/perfiles
-            .requestMatchers("/api/projects/**").permitAll() // Ver proyectos públicamente
+            .requestMatchers(HttpMethod.GET, "/api/users/**").permitAll() // Ver perfiles
+            .requestMatchers("/api/projects/**").permitAll() // Ver proyectos
             
-           
             .anyRequest().authenticated() 
         )
         .addFilterBefore(new JwtAuthenticationFilter(jwtUtils, userDetailsService), 
@@ -57,11 +55,15 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        // Permitimos el origen de tu proyecto Angular
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:4200"));
-        // Permitimos los métodos comunes
+        
+        // Se habilitan ambos orígenes: Local y Producción (Vercel)
+        configuration.setAllowedOrigins(Arrays.asList(
+            "http://localhost:4200", 
+            "https://icc-ppw-proyecto-portafolio.vercel.app"
+        ));
+        
+        // Configuración de métodos y encabezados para JWT y API REST
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
-        // Permitimos los encabezados necesarios (como Authorization para el JWT)
         configuration.setAllowedHeaders(Arrays.asList("Authorization", "Content-Type"));
         configuration.setAllowCredentials(true);
 
