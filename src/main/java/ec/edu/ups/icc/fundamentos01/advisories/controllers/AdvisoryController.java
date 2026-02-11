@@ -39,7 +39,7 @@ public class AdvisoryController {
 
     // 4. Obtener una por ID (Mantenla después de las rutas fijas)
     @GetMapping("/{id}")
-    public AdvisoryResponseDto getOne(@PathVariable Long id) {
+    public AdvisoryResponseDto getOne(@PathVariable("id") Long id) {
         return service.findOne(id);
     }
 
@@ -50,14 +50,14 @@ public class AdvisoryController {
 
     @PatchMapping("/{id}/status")
     public AdvisoryResponseDto updateStatus(
-            @PathVariable Long id, 
-            @RequestParam String status,
-            @RequestParam(required = false) String replyMessage) {
+            @PathVariable("id") Long id, 
+            @RequestParam("status") String status,
+            @RequestParam(value = "replyMessage", required = false) String replyMessage) { 
         return service.updateStatus(id, status, replyMessage);
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, Object> delete(@PathVariable Long id) {
+    public Map<String, Object> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return Map.of(
             "message", "Advisory deleted successfully",
@@ -76,7 +76,7 @@ public class AdvisoryController {
     }
 
     @PutMapping("/{id}/respond")
-    public ResponseEntity<?> respond(@PathVariable Long id, @RequestBody Map<String, String> request) {
+    public ResponseEntity<?> respond(@PathVariable("id") Long id, @RequestBody Map<String, String> request) {
     try {
         service.respondAdvisory(id, request.get("status"), request.get("replyMessage"));
         return ResponseEntity.ok().build();

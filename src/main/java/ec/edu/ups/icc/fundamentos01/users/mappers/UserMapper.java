@@ -62,16 +62,17 @@ public class UserMapper {
     
     // Mapea los datos de una actualización parcial a una entidad existente
     public static void updateEntity(UserEntity entity, UpdateProfileDto dto) {
-    if (dto == null || entity == null) return;
+        if (dto == null || entity == null) return;
 
-    if (dto.description() != null) entity.setDescription(dto.description());
-    if (dto.specialty() != null) entity.setSpecialty(dto.specialty());
-    if (dto.photoURL() != null) entity.setPhotoURL(dto.photoURL());
-    if (dto.linkedin() != null) entity.setLinkedin(dto.linkedin());
-    if (dto.github() != null) entity.setGithub(dto.github());
-    if (dto.skills() != null) entity.setSkills(dto.skills());
-    
-   
-    if (dto.availability() != null) entity.setAvailability(dto.availability()); 
+        // Agrega esta línea para actualizar el nombre
+        if (dto.name() != null) entity.setName(dto.name()); 
+
+        if (dto.description() != null) entity.setDescription(dto.description());
+        if (dto.specialty() != null) entity.setSpecialty(dto.specialty());
+        if (dto.photoURL() != null) entity.setPhotoURL(dto.photoURL());
+        if (dto.linkedin() != null) entity.setLinkedin(dto.linkedin());
+        if (dto.github() != null) entity.setGithub(dto.github());
+        if (dto.skills() != null) entity.setSkills(dto.skills());
+         if (dto.availability() != null) entity.setAvailability(dto.availability()); 
     }
 }

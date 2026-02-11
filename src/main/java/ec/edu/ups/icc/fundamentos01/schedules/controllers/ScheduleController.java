@@ -34,7 +34,7 @@ public class ScheduleController {
     }
 
     @DeleteMapping
-    public void removeSlot(@RequestParam String slot) {
+    public void removeSlot(@RequestParam("slot") String slot) {
         service.removeSlot(slot);
     }
 }

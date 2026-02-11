@@ -31,7 +31,7 @@ public class ProjectController {
     // 2. Ruta para ver el portafolio de otro (Público)
     // Cambiado de String a Long para consistencia con Angular y la BD
     @GetMapping("/programmer/{id}")
-    public List<ProjectResponseDto> getByProgrammer(@PathVariable Long id) {
+    public List<ProjectResponseDto> getByProgrammer(@PathVariable("id") Long id) {
         return service.findByProgrammerId(id);
     }
 
@@ -41,7 +41,7 @@ public class ProjectController {
     }
 
     @GetMapping("/{id}")
-    public ProjectEntity getOne(@PathVariable Long id) {
+    public ProjectEntity getOne(@PathVariable("id") Long id) {
         return service.findOne(id);
     }
 
@@ -51,12 +51,12 @@ public class ProjectController {
     }
 
     @PutMapping("/{id}")
-    public ProjectEntity update(@PathVariable Long id, @RequestBody ProjectEntity entity) {
+    public ProjectEntity update(@PathVariable("id") Long id, @RequestBody ProjectEntity entity) {
         return service.update(id, entity);
     }
 
     @DeleteMapping("/{id}")
-    public Map<String, Object> delete(@PathVariable Long id) {
+    public Map<String, Object> delete(@PathVariable("id") Long id) {
         service.delete(id);
         return Map.of("message", "Project deleted", "id", id);
     }
